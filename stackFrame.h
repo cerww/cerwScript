@@ -18,13 +18,14 @@ public:
 	stackFrame(stackFrame* t_parentFrame,const instructionSet& t_orderOfExecution) :
 		m_parentFrame(t_parentFrame),
 		m_orderOfExecution(t_orderOfExecution){
+		//splitVarsToVars("(ABC,DDD,AWE)");
 	};
 	stackFrame& run();
 	virtual Typename getType(const std::string& type) const;
 	//void addVar(std::string Typename,);
-	virtual variable getVal(std::string&&);
-	virtual variable getVal(const std::string&);
-	virtual variable callFunction(const std::string& functionName, const std::vector<variable>& args);
+	virtual variable getVal(std::string&&,stackFrame* start = nullptr);
+	virtual variable getVal(const std::string&, stackFrame* start = nullptr);
+	virtual variable callFunction(const std::string& functionName, const std::vector<variable>& args, stackFrame* start = nullptr);
 	stackFrame& createVar(Typename type,const std::string& varName) {
 		m_vars.insert(std::make_pair(varName, variable(type)));
 		return *this;
@@ -61,17 +62,20 @@ protected:
 	void runInstruction<returnValInstruction>(const returnValInstruction&);
 	template<>
 	void runInstruction<printInstruction>(const printInstruction&);
+	std::vector<variable> splitVarsToVars(std::string_view, stackFrame* start);
+	friend class globalStackFrame;
 };
 
 class globalStackFrame:public stackFrame {
 public:
-	globalStackFrame(const instructionSet& a) :stackFrame(this, a) {
+	globalStackFrame(instructionSet a) :temp(std::move(a)),stackFrame(this, temp) {
 		Typename::addType("int", {});
 		addType("int");
 	};
-	variable getVal(std::string&&)override final ;
-	variable getVal(const std::string&)override final;
+	variable getVal(std::string&&, stackFrame* start = nullptr)override final ;
+	variable getVal(const std::string&, stackFrame* start = nullptr)override final;
 	Typename getType(const std::string& type)const override final;
-	variable callFunction(const std::string& functionName, const std::vector<variable>& args) override final;
+	variable callFunction(const std::string& functionName, const std::vector<variable>& args, stackFrame* start = nullptr) override final;
+	instructionSet temp;
 };
 

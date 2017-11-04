@@ -54,6 +54,30 @@ inline std::string getFileContentsa(const std::string& filePath) {
 	file.close();
 	return std::move(fileContents);
 }
+
+inline int eval(const std::string& str) {
+	size_t pos = str.find_first_of("+-/*%") + 1;
+	int retVal = std::stoi(str.substr(0, pos - 1));
+	if (pos) {
+		switch (str[pos - 1]){
+		case '+':
+			retVal += eval(str.substr(pos));
+			break;
+		case '-':
+			retVal -= eval(str.substr(pos));
+			break;
+		case '*':
+			retVal *= eval(str.substr(pos));
+			break;
+		case '/':
+			retVal /= eval(str.substr(pos));
+			break;
+		case '%':
+			retVal %= eval(str.substr(pos));
+			break;
+		}
+	}return retVal;
+}
 //iota for for loops
 /*
 template<typename T>

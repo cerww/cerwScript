@@ -1,7 +1,6 @@
 #include "cerwScriptParser.h"
-#include <iostream>
 
-std::string parser::removeUnneededSpaces(std::string code){
+std::string removeUnneededSpaces(std::string code){
 
 	turnNewLineTabIntoSpace(code);
 
@@ -17,21 +16,25 @@ std::string parser::removeUnneededSpaces(std::string code){
 		if (code[currentSpot + 1] == ' ') 
 			code.erase(currentSpot + 1, 1);
 		currentSpot = code.find_first_of("{};()[]-+*/=,", currentSpot + 1);
-	}
-	return std::move(code);
+	}return std::move(code);
 }
 
-void parser::turnNewLineTabIntoSpace(std::string & code){
+void turnNewLineTabIntoSpace(std::string & code){
 	for (auto& i : code)
 		if (i == '\n' || i == '\t') 
 			i = ' ';	
 }
 
-void parser::removeMultipleInARow(std::string & code){
+void removeMultipleInARow(std::string & code){
 	for (size_t i = 1; i < code.size() - 1; ++i) //first and last char isnt a space
 		if (code[i] == ' ') 
 			while (code[i + 1] == ' ') 
 				code.erase(i + 1, 1);
+
+}
+
+void replaceOperators(std::string & code){
+	size_t currentRelevantPos = 0;
 
 }
 
@@ -116,7 +119,6 @@ instructionSet parser::parseStuff(std::string_view code) {
 					toStr(nameOfVar)
 					);
 				if (code[other]== '=') {//set val
-					std::cout << std::string(code.data() + other + 1, nextSpot - other - 1)<<std::endl;
 					retVal.addInstruction<setValInstruc>(
 						toStr(nameOfVar),
 						std::string(code.data()+other+1,nextSpot - other - 1)

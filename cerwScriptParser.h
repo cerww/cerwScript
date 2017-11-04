@@ -4,6 +4,11 @@
 #include "randomThings.h"
 #include "svstrStuffs.h"
 
+void turnNewLineTabIntoSpace(std::string& code);
+std::string removeUnneededSpaces(std::string code);
+void removeMultipleInARow(std::string& code);
+void replaceOperators(std::string& code);
+
 class parser {
 public:
 	parser() = default;
@@ -13,11 +18,7 @@ public:
 		return globalStackFrame(b);
 	}
 private:
-	std::string removeUnneededSpaces(std::string code);
-	void turnNewLineTabIntoSpace(std::string& code);
-	void removeMultipleInARow(std::string& code);
 	instructionSet parseStuff(std::string_view);
 	instructionSet b;
 
 };
-
